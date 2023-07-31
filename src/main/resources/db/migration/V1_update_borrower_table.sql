@@ -1,28 +1,49 @@
 -- Create the Book table
 CREATE TABLE Book (
-                      id VARCHAR(255) PRIMARY KEY,
+                      id SERIAL PRIMARY KEY,
                       title VARCHAR(255) NOT NULL,
                       author VARCHAR(255) NOT NULL,
                       isbn VARCHAR(255) NOT NULL,
                       publicationDate DATE NOT NULL,
+                      category VARCHAR(20) NOT NULL CHECK ( category IN ('FICTION', 'NON-FICTION') ),
                       quantity INT NOT NULL,
-                      status VARCHAR(10) NOT NULL CHECK (status IN ('available', 'borrowed'))
+                      status VARCHAR(10) NOT NULL CHECK (status IN ('AVAILABLE', 'BORROWED')) -- Borrowed or unavailable
 );
+CREATE SEQUENCE book_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE book_seq
+    CACHE 50;
+
+
+
 
 -- Create the Borrower table
 CREATE TABLE Borrower (
-                          borrowerId VARCHAR(255) PRIMARY KEY,
+                          borrowerId SERIAL PRIMARY KEY,
                           name VARCHAR(255) NOT NULL,
+                          gender VARCHAR(25) NOT NULL,
                           email VARCHAR(255) NOT NULL,
-                          phone VARCHAR(255) NOT NULL
+                          phone VARCHAR(255) NOT NULL,
+                          status VARCHAR(10) NOT NULL CHECK (status IN ('ACTIVE', 'INACTIVE'))
 );
 
+-- CREATE TABLE Author (
+--     id VARCHAR(255) PRIMARY KEY,
+--     name VARCHAR(255) NOT NULL
+-- );
+
 -- Create the BorrowedBook table to represent the many-to-many relationship between Book and Borrower
-CREATE TABLE BorrowBook (
-                            borrowerId VARCHAR(255),
-                            id VARCHAR(255),
+CREATE TABLE Borrowed_Book (
+                            borrowerId SERIAL,
+                            id SERIAL NOT NULL,
                             dateBorrowed DATE,
-                            dateToBeReturned DATE,
+                            dueDate DATE,
+                            dateReturned DATE,
                             PRIMARY KEY (borrowerId, id),
                             FOREIGN KEY (borrowerId) REFERENCES Borrower(borrowerId),
                             FOREIGN KEY (id) REFERENCES Book(id)
@@ -30,10 +51,9 @@ CREATE TABLE BorrowBook (
 
 -- Create the BookReview table
 CREATE TABLE BookReview (
-                            reviewId SERIAL PRIMARY KEY,
-                            borrowerId VARCHAR(255),
-                            id VARCHAR(255),
-                            rating DECIMAL(3, 2) NOT NULL,
+                            reviewId INTEGER PRIMARY KEY,
+                            borrowerId SERIAL,
+                            id SERIAL,
                             comment TEXT,
                             FOREIGN KEY (borrowerId) REFERENCES Borrower(borrowerId),
                             FOREIGN KEY (id) REFERENCES Book(id)
@@ -41,10 +61,11 @@ CREATE TABLE BookReview (
 
 -- Create the ReturnBook table to represent the many-to-many relationship between Book and Borrower
 CREATE TABLE ReturnBook (
-                            borrowerId VARCHAR(255),
-                            id VARCHAR(255),
+                            borrowerId SERIAL,
+                            id SERIAL,
                             dateBorrowed DATE,
-                            dateToBeReturned DATE,
+                            dueDate DATE,
+                            dateReturned DATE,
                             PRIMARY KEY (borrowerId, id),
                             FOREIGN KEY (borrowerId) REFERENCES Borrower(borrowerId),
                             FOREIGN KEY (id) REFERENCES Book(id)
