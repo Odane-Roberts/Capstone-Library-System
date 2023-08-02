@@ -1,11 +1,11 @@
 -- Create the Book table
 CREATE TABLE Book (
-                      id SERIAL PRIMARY KEY,
+                      id SERIAL PRIMARY KEY, -- use big serial along with IDENTITY
                       title VARCHAR(255) NOT NULL,
                       author VARCHAR(255) NOT NULL,
                       isbn VARCHAR(255) NOT NULL,
                       publicationDate DATE NOT NULL,
-                      category VARCHAR(20) NOT NULL CHECK ( category IN ('FICTION', 'NON-FICTION') ),
+                      category VARCHAR(20) NOT NULL CHECK ( category IN ('FICTION', 'NONFICTION') ),
                       quantity INT NOT NULL,
                       status VARCHAR(10) NOT NULL CHECK (status IN ('AVAILABLE', 'BORROWED')) -- Borrowed or unavailable
 );
@@ -28,8 +28,7 @@ CREATE TABLE Borrower (
                           name VARCHAR(255) NOT NULL,
                           gender VARCHAR(25) NOT NULL,
                           email VARCHAR(255) NOT NULL,
-                          phone VARCHAR(255) NOT NULL,
-                          status VARCHAR(10) NOT NULL CHECK (status IN ('ACTIVE', 'INACTIVE'))
+                          phone VARCHAR(255) NOT NULL
 );
 
 -- CREATE TABLE Author (

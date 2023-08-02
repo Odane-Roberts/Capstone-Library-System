@@ -17,7 +17,7 @@ public interface BookService {
 
     List<Book> findByCategory(Category category);
     Book updateBook(Book book);
-//    Book findByAuthor(String author);
+    List<Book> findByAuthor(String author);
 
 
 }

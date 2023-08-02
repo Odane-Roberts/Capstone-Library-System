@@ -11,7 +11,7 @@ public interface MemberService {
     void removeMember(Member member);
     Member updateMember(Member member);
 
-    void deactivateMember(Member member);
-
-    void activateMember(Member member);
+//    void deactivateMember(Member member);
+//
+//    void activateMember(Member member);
 }

@@ -2,6 +2,8 @@ package dev.odane.capstoneproject.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -9,9 +11,11 @@ import java.util.List;
 @Getter
 @Setter
 @RequiredArgsConstructor
+@Builder
 @Entity
 @Table(name = "Borrowed_Book")
-public class BorrowedBook {
+@AllArgsConstructor
+public class BorrowedBook implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

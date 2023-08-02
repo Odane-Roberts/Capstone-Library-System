@@ -48,4 +48,9 @@ private final BookRepository repository;
         return repository.save(book);
     }
 
+    @Override
+    public List<Book> findByAuthor(String author) {
+        return repository.findAllByAuthor(author);
+    }
+
 }

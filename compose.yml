@@ -23,5 +23,13 @@ services:
     ports:
       - "5050:5050"
 
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
 volumes:
   pg_data:
+  redis_data:

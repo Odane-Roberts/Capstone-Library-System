@@ -41,12 +41,12 @@ public class MemberServiceImpl implements MemberService {
         return repository.save(member);
     }
 
-    @Override
-    public void deactivateMember(Member member) {
-        member.setStatus(memberStatus.INACTIVE);
-    }
-    @Override
-    public void activateMember(Member member) {
-        member.setStatus(memberStatus.ACTIVE);
-    }
+//    @Override
+//    public void deactivateMember(Member member) {
+//        member.setStatus(memberStatus.INACTIVE);
+//    }
+//    @Override
+//    public void activateMember(Member member) {
+//        member.setStatus(memberStatus.ACTIVE);
+//    }
 }

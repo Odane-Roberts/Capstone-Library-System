@@ -3,13 +3,17 @@ package dev.odane.capstoneproject.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Getter
 @Setter
+@Builder
 @Entity
 @Table(name = "Borrower")
-public class Member {
+@NoArgsConstructor
+@AllArgsConstructor
+public class Member implements Serializable {
     @Id
     @SequenceGenerator(name = "member_seq", sequenceName = "book_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "member_seq")
