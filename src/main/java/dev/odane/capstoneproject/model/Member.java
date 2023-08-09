@@ -24,7 +24,8 @@ public class Member implements Serializable {
     @Enumerated(EnumType.STRING)
     private Gender gender;
     private String phone;
-    private memberStatus status;
+    @Enumerated(EnumType.STRING)
+    private MemberStatus status;
 
     @ManyToMany
     @JoinTable(

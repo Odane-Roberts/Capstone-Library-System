@@ -1,5 +1,7 @@
 package dev.odane.capstoneproject.controller;
 
+import dev.odane.capstoneproject.DTOs.BookDTO;
+import dev.odane.capstoneproject.mapper.BookMapper;
 import dev.odane.capstoneproject.model.Book;
 import dev.odane.capstoneproject.model.Category;
 import dev.odane.capstoneproject.service.BookService;
@@ -10,23 +12,19 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/book")
+@RequestMapping("/api/v1/book")
 public class BookController {
     private final BookService service;
 
     public BookController(BookService service) {
         this.service = service;
+
     }
 
-    @GetMapping("")
-    public List<Book> getBooks(@RequestParam Optional<Category> category,
-                               @RequestParam Optional<String> author) {
-        if (category.isPresent()){
-            return service.findByCategory(category.get());
-        } else if(author.isPresent()){
-            return service.findByAuthor(author.get());
-        }
-       return service.findAll();
+    @GetMapping
+    public List<BookDTO> getBooks(@RequestParam Optional<Category> category,
+                                  @RequestParam Optional<String> author) {
+       return service.findAll(category, author);// parameters for search
     }
 
 
@@ -37,18 +35,18 @@ public class BookController {
     }
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/add")
+    @PostMapping
     public Book addBooks(@RequestBody Book book) {
         return service.addBook(book);
     }
     @ResponseStatus(HttpStatus.OK)
-    @DeleteMapping("/delete")
+    @DeleteMapping
     public void deleteBook(@RequestBody Book book){
         service.removeBook(book);
     }
 
     @ResponseStatus(HttpStatus.ACCEPTED)
-    @PutMapping("/update")
+    @PutMapping
     public Book updateBook(@RequestBody Book book){
         return service.updateBook(book);
     }

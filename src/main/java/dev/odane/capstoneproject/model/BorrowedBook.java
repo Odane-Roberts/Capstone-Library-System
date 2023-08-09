@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -19,9 +19,9 @@ public class BorrowedBook implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private Date dateBorrowed;
-    private Date dueDate;
-    private Date dateReturned;
+    private LocalDateTime dateBorrowed;
+    private LocalDateTime dueDate;
+    private LocalDateTime dateReturned;
 
     @ManyToOne
     @JoinColumn(name = "borrowerid")

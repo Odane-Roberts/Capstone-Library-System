@@ -2,7 +2,6 @@ package dev.odane.capstoneproject.service;
 
 import dev.odane.capstoneproject.exception.MemberNotFoundException;
 import dev.odane.capstoneproject.model.Member;
-import dev.odane.capstoneproject.model.memberStatus;
 import dev.odane.capstoneproject.repository.MemberRepository;
 import org.springframework.stereotype.Service;
 

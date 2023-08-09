@@ -1,5 +1,5 @@
 package dev.odane.capstoneproject.model;
 
-public enum memberStatus {
+public enum MemberStatus {
     ACTIVE, INACTIVE
 }

@@ -18,4 +18,9 @@ public class CustomExceptionHandler {
         return new ResponseEntity<>(memberNotFoundException.getMessage(), HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(BookNotAvailableException.class)
+    public ResponseEntity<String> handleBookNotAvailableException(BookNotAvailableException bookNotAvailableException){
+        return new ResponseEntity<>(bookNotAvailableException.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
 }

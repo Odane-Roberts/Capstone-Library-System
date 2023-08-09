@@ -1,0 +1,505 @@
+
+openapi: 3.0.0
+info:
+  title: Library Management System
+  description: |-
+    This API provides a comprehensive set of endpoints for efficient management of books, Members, and transactions in a library. It enables librarians to effortlessly organize and track the library's collection, maintain accurate Member records, and facilitate smooth borrowing and returning experiences for library users. With this API, librarians can easily add, update, and remove books from the library's collection, manage Member information, handle book borrowing and returning processes, calculate fines for overdue books, enable book reservations, process book renewals, collect book reviews and ratings, and generate reports and analytics for data-driven decision making. Streamline your library operations and enhance user satisfaction with the Library Management System API.
+  contact:
+    email: oroberts@griddynamics.com
+  version: 1.0.0
+servers:
+  - url: https://api.example.com/v1
+tags:
+  - name: Books
+    description: Endpoints for book management
+  - name: Members
+    description: Endpoints for Member management
+  - name: Transactions
+    description: Endpoints for book borrowing and returning
+  - name: Fines
+    description: Endpoints for fine calculation
+  - name: Reservations
+    description: Endpoints for book reservations
+  - name: Renewals
+    description: Endpoints for book renewals
+  - name: Reviews
+    description: Endpoints for book reviews
+  - name: Reports
+    description: Endpoints for generating reports and analytics
+paths:
+  /books:
+    get:
+      summary: Get a list of books
+      operationId: getBooks
+      tags:
+        - Books
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Book'
+    post:
+      summary: Add a new book
+      operationId: addBook
+      tags:
+        - Books
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookDTO'
+      responses:
+        '201':
+          description: Book added successfully
+  /books/{bookId}:
+    get:
+      summary: Get a book by ID
+      operationId: getBookById
+      tags:
+        - Books
+      parameters:
+        - name: bookId
+          in: path
+          description: ID of the book
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+    put:
+      summary: Update a book
+      operationId: updateBook
+      tags:
+        - Books
+      parameters:
+        - name: bookId
+          in: path
+          description: ID of the book
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookDTO'
+      responses:
+        '200':
+          description: Book updated successfully
+    delete:
+      summary: Delete a book
+      operationId: deleteBook
+      tags:
+        - Books
+      parameters:
+        - name: bookId
+          in: path
+          description: ID of the book
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Book deleted successfully
+  /books/search:
+    get:
+      summary: Search books
+      operationId: searchBooks
+      tags:
+        - Books
+      parameters:
+        - name: title
+          in: query
+          description: Title of the book
+          schema:
+            type: string
+        - name: author
+          in: query
+          description: Author of the book
+          schema:
+            type: string
+        - name: isbn
+          in: query
+          description: ISBN of the book
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Book'
+  /Members:
+    get:
+      summary: Get a list of Members
+      operationId: getMembers
+      tags:
+        - Members
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Member'
+    post:
+      summary: Register a new Member
+      operationId: addMember
+      tags:
+        - Members
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MemberDTO'
+      responses:
+        '201':
+          description: Member registered successfully
+  /Members/{MemberId}:
+    get:
+      summary: Get a Member by ID
+      operationId: getMemberById
+      tags:
+        - Members
+      parameters:
+        - name: MemberId
+          in: path
+          description: ID of the Member
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Member'
+    put:
+      summary: Update a Member
+      operationId: updateMember
+      tags:
+        - Members
+      parameters:
+        - name: MemberId
+          in: path
+          description: ID of the Member
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MemberDTO'
+      responses:
+        '200':
+          description: Member updated successfully
+    delete:
+      summary: Deactivate a Member's account
+      operationId: deactivateMember
+      tags:
+        - Members
+      parameters:
+        - name: MemberId
+          in: path
+          description: ID of the Member
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Member account deactivated successfully
+  /Members/search:
+    get:
+      summary: Search Members
+      operationId: searchMembers
+      tags:
+        - Members
+      parameters:
+        - name: name
+          in: query
+          description: Name of the Member
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Member'
+  /transactions/borrow:
+    post:
+      summary: Borrow a book
+      operationId: borrowBook
+      tags:
+        - Transactions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BorrowBook'
+      responses:
+        '201':
+          description: Book borrowed successfully
+  /transactions/return:
+    post:
+      summary: Return a book
+      operationId: returnBook
+      tags:
+        - Transactions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReturnBookDTO'
+      responses:
+        '200':
+          description: Book returned successfully
+  /transactions/fines:
+    get:
+      summary: Get a list of Members with outstanding fines
+      operationId: getMembersWithFines
+      tags:
+        - Fines
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Member'
+  /books/{bookId}/reserve:
+    post:
+      summary: Reserve a book
+      operationId: reserveBook
+      tags:
+        - Reservations
+      parameters:
+        - name: bookId
+          in: path
+          description: ID of the book
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReserveBookDTO'
+      responses:
+        '201':
+          description: Book reserved successfully
+  /books/{bookId}/renewal:
+    post:
+      summary: Request a renewal for a book
+      operationId: requestBookRenewal
+      tags:
+        - Renewals
+      parameters:
+        - name: bookId
+          in: path
+          description: ID of the book
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Renewal requested successfully
+  /books/{bookId}/review:
+    post:
+      summary: Add a review for a book
+      operationId: addBookReview
+      tags:
+        - Reviews
+      parameters:
+        - name: bookId
+          in: path
+          description: ID of the book
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookReviewDTO'
+      responses:
+        '201':
+          description: Review added successfully
+
+    get:
+      summary: Get review for a book
+      operationId: getBookReview
+      tags:
+        - Reviews
+      parameters:
+        - name: bookId
+          in: path
+          description: ID of the book
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Review obtain Succesfuly
+  /reports/most-borrowed-books:
+    get:
+      summary: Get a list of most borrowed books
+      operationId: getMostBorrowedBooks
+      tags:
+        - Reports
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Book'
+  /reports/popular-authors:
+    get:
+      summary: Get a list of popular authors
+      operationId: getPopularAuthors
+      tags:
+        - Reports
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+components:
+  schemas:
+    Book:
+      type: object
+      properties:
+        bookId:
+          type: string
+        title:
+          type: string
+        author:
+          type: string
+        isbn:
+          type: string
+        publicationDate:
+          type: string
+          format: date
+        quantity:
+          type: integer
+        status:
+          type: string
+          enum:
+            - available
+            - borrowed
+    BookDTO:
+      type: object
+      properties:
+        title:
+          type: string
+        author:
+          type: string
+        isbn:
+          type: string
+        publicationDate:
+          type: string
+          format: date
+        quantity:
+          type: integer
+    Member:
+      type: object
+      properties:
+        MemberId:
+          type: string
+        name:
+          type: string
+        contactInfo:
+          type: object
+          properties:
+            email:
+              type: string
+            phone:
+              type: string
+    MemberDTO:
+      type: object
+      properties:
+        name:
+          type: string
+        contactInfo:
+          type: object
+          properties:
+            email:
+              type: string
+            phone:
+              type: string
+    BorrowBook:
+      type: object
+      properties:
+        MemberId:
+          type: string
+        bookId:
+          type: string
+        dateBorrowed:
+          type: string
+        returnDate:
+          type: string
+    ReturnBookDTO:
+      type: object
+      properties:
+        bookId:
+          type: string
+        MemberId:
+          type: string
+        dateBorrowed:
+          type: string
+        returnDate:
+          type: string
+    ReserveBookDTO:
+      type: object
+      properties:
+        MemberId:
+          type: string
+        bookId:
+          type: string
+        dateReserved:
+          type: string
+    BookReviewDTO:
+      type: object
+      properties:
+        MemberId:
+          type: string
+        rating:
+          type: number
+        comment:
+          type: string
