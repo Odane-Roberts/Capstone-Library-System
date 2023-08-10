@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 public class Member implements Serializable {
     @Id
-    @SequenceGenerator(name = "member_seq", sequenceName = "book_seq", allocationSize = 1)
+    @SequenceGenerator(name = "member_seq", sequenceName = "member_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "member_seq")
     @Column(name = "borrowerid")
     private Long id;
@@ -27,11 +27,11 @@ public class Member implements Serializable {
     @Enumerated(EnumType.STRING)
     private MemberStatus status;
 
-    @ManyToMany
+    @OneToMany
     @JoinTable(
-            name = "Borrowed_Book", //name of the table that holds the relationship
+            name = "borrowed_book", //name of the table that holds the relationship
             joinColumns = @JoinColumn(name = "borrowerid"), // references the member
-            inverseJoinColumns = @JoinColumn(name = "id") // references the book
+            inverseJoinColumns = @JoinColumn(name = "book_id") // references the book
     )
-    private List<Book> borrowedBooks; // list of books borrowed
+    private List<BorrowedBook> borrowedBooks; // list of books borrowed
 }

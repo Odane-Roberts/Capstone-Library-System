@@ -18,6 +18,7 @@ public interface BookService {
     List<BookDTO> findAll(Optional<Category> category, Optional<String> author);
 
     List<Book> findByCategory(Category category);
+
     Book updateBook(Book book);
     List<Book> findByAuthor(String author);
 

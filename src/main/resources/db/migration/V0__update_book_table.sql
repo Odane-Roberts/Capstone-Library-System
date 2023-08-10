@@ -28,7 +28,8 @@ CREATE TABLE Borrower (
                           name VARCHAR(255) NOT NULL,
                           gender VARCHAR(25) NOT NULL,
                           email VARCHAR(255) NOT NULL,
-                          phone VARCHAR(255) NOT NULL
+                          phone VARCHAR(255) NOT NULL,
+                          status VARCHAR(10) NOT NULL CHECK (status IN ('ACTIVE', 'INACTIVE'))
 );
 
 -- CREATE TABLE Author (
@@ -38,21 +39,21 @@ CREATE TABLE Borrower (
 
 -- Create the BorrowedBook table to represent the many-to-many relationship between Book and Borrower
 CREATE TABLE Borrowed_Book (
-                            borrowerId SERIAL,
-                            id SERIAL NOT NULL,
+                            id SERIAL PRIMARY KEY,
+                            borrowerId INTEGER NOT NULL ,
+                            book_id INTEGER NOT NULL,
                             dateBorrowed DATE,
                             dueDate DATE,
                             dateReturned DATE,
-                            PRIMARY KEY (borrowerId, id),
                             FOREIGN KEY (borrowerId) REFERENCES Borrower(borrowerId),
-                            FOREIGN KEY (id) REFERENCES Book(id)
+                            FOREIGN KEY (book_id) REFERENCES Book(id)
 );
 
 -- Create the BookReview table
 CREATE TABLE BookReview (
-                            reviewId INTEGER PRIMARY KEY,
-                            borrowerId SERIAL,
-                            id SERIAL,
+                            reviewId SERIAL PRIMARY KEY,
+                            borrowerId INTEGER NOT NULL,
+                            id INTEGER NOT NULL,
                             comment TEXT,
                             FOREIGN KEY (borrowerId) REFERENCES Borrower(borrowerId),
                             FOREIGN KEY (id) REFERENCES Book(id)
@@ -60,8 +61,8 @@ CREATE TABLE BookReview (
 
 -- Create the ReturnBook table to represent the many-to-many relationship between Book and Borrower
 CREATE TABLE ReturnBook (
-                            borrowerId SERIAL,
-                            id SERIAL,
+                            borrowerId INTEGER NOT NULL,
+                            id INTEGER NOT NULL,
                             dateBorrowed DATE,
                             dueDate DATE,
                             dateReturned DATE,
@@ -69,3 +70,4 @@ CREATE TABLE ReturnBook (
                             FOREIGN KEY (borrowerId) REFERENCES Borrower(borrowerId),
                             FOREIGN KEY (id) REFERENCES Book(id)
 );
+CREATE SEQUENCE borrowed_book_seq START 1;

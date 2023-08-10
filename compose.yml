@@ -7,9 +7,9 @@ services:
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
-      POSTGRES_DB: capstoneDB
+      POSTGRES_DB: capstoneDB_v2
     volumes:
-      - pg_data:/var/lib/postgresql/capstone-v2
+      - pg_data:/var/lib/postgresql/capstone-v4
     ports:
       - "5430:5432"
   pg-admin:

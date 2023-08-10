@@ -2,6 +2,7 @@ package dev.odane.capstoneproject.controller;
 
 import dev.odane.capstoneproject.DTOs.BookBagDTO;
 import dev.odane.capstoneproject.model.Book;
+import dev.odane.capstoneproject.model.BorrowedBook;
 import dev.odane.capstoneproject.service.BagService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
@@ -26,8 +27,31 @@ public class BagController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/{id}/view")
-    public List<Book> viewBag(@PathVariable Long id, HttpSession session) {
-        return service.viewBag(id, session);
+    @GetMapping
+    public List<Book> viewBag( HttpSession session) {
+        return service.viewBag(session);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @DeleteMapping
+    public Book removeFromBag(@RequestBody Book book, HttpSession session){
+        return service.removeFromBag(book, session);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @DeleteMapping("/empty")
+    public String emptyBag(HttpSession session){
+        return service.emptyBag(session);
+    }
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/{id}/borrow")
+    public String borrowBooks(@PathVariable Long id, HttpSession session) {
+        return service.borrowBooks(id, session);
+    }
+
+
+    public String reserveBook(@RequestBody BorrowedBook book){
+        return service.reserveBook(book);
     }
 }
+

@@ -5,7 +5,6 @@ import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.List;
 
 
 @Getter
@@ -13,21 +12,25 @@ import java.util.List;
 @RequiredArgsConstructor
 @Builder
 @Entity
-@Table(name = "Borrowed_Book")
+@Table(name = "borrowed_book")
 @AllArgsConstructor
 public class BorrowedBook implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "borrowed_book_seq")
+    @SequenceGenerator(name = "borrowed_book_seq", sequenceName = "borrowed_book_seq", allocationSize = 1)
     private Long id;
+    @Column(name = "dateborrowed")
     private LocalDateTime dateBorrowed;
+    @Column(name = "duedate")
     private LocalDateTime dueDate;
+    @Column(name = "datereturned")
     private LocalDateTime dateReturned;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "borrowerid")
     private Member member;
 
-    @OneToMany
-    @JoinColumn(name = "id")
-    private List<Book> book;
+    @ManyToOne
+    @JoinColumn(name = "book_id")
+    private Book book;
 }
