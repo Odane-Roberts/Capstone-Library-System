@@ -6,42 +6,30 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
 @Getter
 @Setter
 @Builder
-@Entity
-@Table(name = "Borrower")
 @NoArgsConstructor
 @AllArgsConstructor
-public class Member implements Serializable, UserDetails {
+@Entity
+public class Admin  implements UserDetails {
+
     @Id
-    @SequenceGenerator(name = "member_seq", sequenceName = "member_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "member_seq")
-    @Column(name = "borrowerid")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
-    private String name;
+    private String firstname;
+    private String lastname;
+
     private String email;
-    private String password;
-    @Enumerated(EnumType.STRING)
-    private Gender gender;
     private String phone;
     @Enumerated(EnumType.STRING)
-    private MemberStatus status;
+    private Gender gender;
+    private String password;
     @Enumerated(EnumType.STRING)
     private Role role;
-
-
-    @OneToMany
-    @JoinTable(
-            name = "borrowed_book", //name of the table that holds the relationship
-            joinColumns = @JoinColumn(name = "borrowerid"), // references the member
-            inverseJoinColumns = @JoinColumn(name = "book_id") // references the book
-    )
-    private List<BorrowedBook> borrowedBooks; // list of books borrowed
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

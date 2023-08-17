@@ -2,12 +2,10 @@ package dev.odane.capstoneproject.service;
 
 import dev.odane.capstoneproject.DTOs.MemberDTO;
 import dev.odane.capstoneproject.exception.BookNotFoundBookException;
+import dev.odane.capstoneproject.exception.BorrowedBookNotFoundException;
 import dev.odane.capstoneproject.exception.MemberNotFoundException;
 import dev.odane.capstoneproject.mapper.MemberMapper;
-import dev.odane.capstoneproject.model.BorrowedBook;
-import dev.odane.capstoneproject.model.Member;
-import dev.odane.capstoneproject.model.MemberStatus;
-import dev.odane.capstoneproject.model.Status;
+import dev.odane.capstoneproject.model.*;
 import dev.odane.capstoneproject.repository.BookRepository;
 import dev.odane.capstoneproject.repository.BorrowedBookRepository;
 import dev.odane.capstoneproject.repository.MemberRepository;
@@ -42,10 +40,6 @@ public class MemberServiceImpl implements MemberService {
                 .orElseThrow(() ->new MemberNotFoundException("Member not found "+id));
     }
 
-    @Override
-    public Member addMember(Member member) {
-        return repository.save(member);
-    }
 
     @Override
     public Member removeMember(Member member) {
@@ -65,15 +59,18 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public String returnBooks(Long id, BorrowedBook book) {
-        // TODO find borrowed book by id or by borrowedBook object ? for now assume member can identify the transaction
+    public String returnBooks(Book book) {
 
-        BorrowedBook borrowedBook = borrowedBookRepository.findById(book.getId())
-                        .orElseThrow(() -> new BookNotFoundBookException("Book not found "));
+        BorrowedBook borrowedBook = borrowedBookRepository.findBorrowedBookByBook(book)
+                        .orElseThrow(() -> new BorrowedBookNotFoundException("Borrowed book not found "));
         borrowedBook.setDateReturned(LocalDateTime.now());
-        bookRepository.findById(book.getBook().getId())
-                .orElseThrow(() -> new BookNotFoundBookException("Book not found"))
-                .setStatus(Status.AVAILABLE);
+        borrowedBookRepository.save(borrowedBook);
+
+
+        Book book1 = bookRepository.findById(book.getId())
+                .orElseThrow(() -> new BookNotFoundBookException("Book not found"));
+                book1.setStatus(Status.AVAILABLE);
+        bookRepository.save(book1);
 
         return "Thanks for returning the book"; // return a status
     }

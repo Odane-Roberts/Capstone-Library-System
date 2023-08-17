@@ -10,6 +10,7 @@ import dev.odane.capstoneproject.repository.BookRepository;
 import dev.odane.capstoneproject.repository.BorrowedBookRepository;
 import dev.odane.capstoneproject.repository.MemberRepository;
 import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -22,17 +23,14 @@ import java.util.List;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class BagServiceImpl implements BagService {
-    private static final  String MEMBER_BAG = "BAG";
+    public static final  String MEMBER_BAG = "BAG";
     private final BookRepository bookRepository;
     private final BorrowedBookRepository borrowedBookRepository;
     private final MemberRepository memberRepository;
 
-    public BagServiceImpl(BookRepository bookRepository, BorrowedBookRepository borrowedBookRepository, MemberRepository memberRepository) {
-        this.bookRepository = bookRepository;
-        this.borrowedBookRepository = borrowedBookRepository;
-        this.memberRepository = memberRepository;
-    }
+
 
     @Override
     public Book addToBag(BookBagDTO bookBagDTO, HttpSession session) {
@@ -55,8 +53,8 @@ public class BagServiceImpl implements BagService {
     }
 
     @Override
-    public String reserveBook(BorrowedBook book) {
-        final Book book1 = bookRepository.findById(book.getBook().getId())
+    public String reserveBook(Book book) {
+        final Book book1 = bookRepository.findById(book.getId())
                 .orElseThrow(() -> new BookNotFoundBookException(" Book not found"));// change name later and fix optional warning
         if(book1.getStatus().equals(Status.AVAILABLE)) {
             return "Book is Available";
@@ -95,15 +93,6 @@ public class BagServiceImpl implements BagService {
         return "Thanks for using our system";
     }
 
-    @Override
-    public String returnBorrowedBook(Book book) {
-        borrowedBookRepository.findBorrowedBookByBook(book)
-                .orElseThrow(() -> new BorrowedBookNotFoundException("Borrowed book not found"))
-                .setDateReturned(LocalDateTime.now());
-
-        return "Thanks for returning the book";
-    }
-
 
     /*
     *
@@ -128,8 +117,16 @@ public class BagServiceImpl implements BagService {
     }
 
     private void addToBorrowedList(long id, BorrowedBook transaction) { // add list of borrowed books to member
-        memberRepository.findById(id).orElseThrow(() -> new MemberNotFoundException("Member " + id + " not found"))
-                .getBorrowedBooks().add(transaction);
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new MemberNotFoundException("Member " + id + " not found"));
+
+        if (member.getBorrowedBooks() == null) {
+            member.setBorrowedBooks(new ArrayList<>()); // Initialize the list if it's null
+        }
+
+        member.getBorrowedBooks().add(transaction);
+
+        memberRepository.save(member); // Make sure to save the updated member entity
     }
 
     // HELPER METHODS

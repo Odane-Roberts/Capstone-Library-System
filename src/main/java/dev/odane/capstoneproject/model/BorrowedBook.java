@@ -1,5 +1,6 @@
 package dev.odane.capstoneproject.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "borrowed_book")
 @AllArgsConstructor
+@JsonIgnoreProperties("member") // Exclude the member property from JSON serialization
 public class BorrowedBook implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "borrowed_book_seq")

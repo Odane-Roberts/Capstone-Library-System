@@ -1,6 +1,7 @@
 package dev.odane.capstoneproject.controller;
 
 import dev.odane.capstoneproject.DTOs.MemberDTO;
+import dev.odane.capstoneproject.model.Book;
 import dev.odane.capstoneproject.model.BorrowedBook;
 import dev.odane.capstoneproject.model.Member;
 import dev.odane.capstoneproject.service.MemberService;
@@ -33,11 +34,7 @@ public class MemberController {
         return service.findById(id);
     }
 
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping
-    public Member addMember(@RequestBody Member member) {
-        return service.addMember(member);
-    }
+
     @ResponseStatus(HttpStatus.ACCEPTED)
     @PutMapping
     public Member updateMember(@RequestBody Member member){
@@ -50,14 +47,12 @@ public class MemberController {
         return service.getBorrowBooks(id);
     }
 
-    // TODO: 02/08/2023  implement return of books function
     @ResponseStatus(HttpStatus.OK)
-    @PutMapping("/{id}/return")
-    public String returnBooks(@PathVariable Long id, @RequestBody BorrowedBook books){
-        return service.returnBooks(id, books);
+    @PutMapping("/return")
+    public String returnBooks(@RequestBody Book books){
+        return service.returnBooks(books);
     }
 
-    // TODO: 02/08/2023  implement renewal of borrowed books function
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping
     public void removeMember(@RequestBody Member member) {

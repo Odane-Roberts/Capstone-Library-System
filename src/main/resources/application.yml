@@ -1,0 +1,24 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5430/capstoneDB_v2
+    username: root
+    password: root
+    driver-class-name: org.postgresql.Driver
+
+  # Flyway properties
+  flyway:
+    baselineOnMigrate: true
+    # Enable Flyway migration on application startup
+    # enabled: true
+    # url: 'jdbc:postgresql://localhost:5430/capstoneDB'
+    # user: root
+    # password: root
+    # Location of the SQL scripts for migration
+    # locations: classpath:db/migration
+    # Flyway table prefix (optional, if you want to change the default)
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+

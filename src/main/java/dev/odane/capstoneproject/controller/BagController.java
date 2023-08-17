@@ -2,7 +2,6 @@ package dev.odane.capstoneproject.controller;
 
 import dev.odane.capstoneproject.DTOs.BookBagDTO;
 import dev.odane.capstoneproject.model.Book;
-import dev.odane.capstoneproject.model.BorrowedBook;
 import dev.odane.capstoneproject.service.BagService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
@@ -50,7 +49,8 @@ public class BagController {
     }
 
 
-    public String reserveBook(@RequestBody BorrowedBook book){
+    @PutMapping("/reserve")
+    public String reserveBook(@RequestBody Book book){
         return service.reserveBook(book);
     }
 }
