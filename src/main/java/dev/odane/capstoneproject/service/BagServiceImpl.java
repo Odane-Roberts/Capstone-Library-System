@@ -34,13 +34,21 @@ public class BagServiceImpl implements BagService {
 
     @Override
     public Book addToBag(BookBagDTO bookBagDTO, HttpSession session) {
+        log.debug("Adding book to bag for book ID: {}", bookBagDTO.getBookId());
+
         List<Book> bag = getBag(session);
 
-        Book book = bookRepository.findById(bookBagDTO.getBookId()).orElseThrow(() -> new BookNotFoundBookException("Book not found")); // change name later and fix optional warning
-        if(!bag.contains(book)) {
-            ifBookAvailableAddToBag(book, bag); // preliminary check` to only add available books to bag
+        Book book = bookRepository.findById(bookBagDTO.getBookId())
+                .orElseThrow(() -> {
+                    log.error("Book not found for ID: {}", bookBagDTO.getBookId());
+                    return new BookNotFoundBookException("Book not found");
+                });
+
+        if (!bag.contains(book)) {
+            ifBookAvailableAddToBag(book, bag);
         } else {
-            throw new BookAlreadyInBagException("Book already in bag "); // change to custom exception later
+            log.debug("Book already in bag: {}", book.getTitle());
+            throw new BookAlreadyInBagException("Book already in bag");
         }
         session.setAttribute(MEMBER_BAG, bag);
         return book;
@@ -48,17 +56,24 @@ public class BagServiceImpl implements BagService {
 
     @Override
     public String emptyBag(HttpSession session) {
-        session.setAttribute(MEMBER_BAG,new ArrayList<Book>());
+        log.debug("Emptying bag");
+        session.removeAttribute(MEMBER_BAG);
         return "Cart emptied";
     }
 
     @Override
     public String reserveBook(Book book) {
+        log.debug("Reserving book with ID: {}", book.getId());
+
         final Book book1 = bookRepository.findById(book.getId())
-                .orElseThrow(() -> new BookNotFoundBookException(" Book not found"));// change name later and fix optional warning
-        if(book1.getStatus().equals(Status.AVAILABLE)) {
+                .orElseThrow(() -> {
+                    log.error("Book not found for ID: {}", book.getId());
+                    return new BookNotFoundBookException("Book not found");
+                });
+
+        if (book1.getStatus().equals(Status.AVAILABLE)) {
             return "Book is Available";
-        } else if (book1.getStatus().equals(Status.RESERVED)){
+        } else if (book1.getStatus().equals(Status.RESERVED)) {
             return "Book is already Reserved by another member";
         } else {
             book1.setStatus(Status.RESERVED);
@@ -68,27 +83,43 @@ public class BagServiceImpl implements BagService {
 
     @Override
     public Book removeFromBag(Book book, HttpSession session) {
+        log.debug("Removing book from bag with ID: {}", book.getId());
+
         List<Book> bag = getBag(session);
         bag.remove(book);
-        session.setAttribute(MEMBER_BAG,bag);
+        session.setAttribute(MEMBER_BAG, bag);
         return book;
     }
 
     @Override
     public List<Book> viewBag(HttpSession session) {
+        log.debug("Viewing bag contents");
         return getBag(session);
     }
-    
+
     @Override
     public String borrowBooks(long id, HttpSession session) {
+        log.debug("Borrowing books for member ID: {}", id);
+
         final Member member = memberRepository.findById(id)
-                .orElseThrow(() -> new MemberNotFoundException("Member " + id + " not found"));
+                .orElseThrow(() -> {
+                    log.error("Member not found for ID: {}", id);
+                    return new MemberNotFoundException("Member " + id + " not found");
+                });
+
         List<Book> bag = getBag(session);
-        for(Book book : bag) {
-            processBorrowedBook(member, book); //create different borrowed book transaction for each book within the bag
+        if (bag.isEmpty()) {
+            log.error("Book bag is empty, can't borrow book");
+            return "Bag is Empty";
         }
-        updateCatalog(bag); // updating catalog
-        session.setAttribute(MEMBER_BAG,new ArrayList<Book>()); // empty bag after borrowing books
+        log.info(bag.size() +" books in bag");
+        for (Book book : bag) {
+            processBorrowedBook(member, book);
+            log.debug("Book borrowed: {}", book.getTitle());
+        }
+
+        updateCatalog(bag);
+        session.setAttribute(MEMBER_BAG, new ArrayList<Book>());
 
         return "Thanks for using our system";
     }
@@ -98,8 +129,10 @@ public class BagServiceImpl implements BagService {
     *
     * UTILITY FUNCTIONS
     * */
+
     private void processBorrowedBook(Member member, Book book) {
-        log.debug(String.valueOf(member.getId()));
+        log.debug("Processing borrowed book for member ID: {}, book ID: {}", member.getId(), book.getId());
+
         BorrowedBook transaction = BorrowedBook.builder()
                 .dateBorrowed(LocalDateTime.now())
                 .dueDate(LocalDateTime.now().plusDays(7))
@@ -109,34 +142,51 @@ public class BagServiceImpl implements BagService {
                 .build();
 
         borrowedBookRepository.save(transaction);
-        addToBorrowedList(member.getId(), transaction);
+//        addToBorrowedList(member.getId(), transaction);
     }
 
-    private void updateCatalog(List<Book> bag) { // set all the books in the transaction to borrowed
-        bag.forEach(book -> book.setStatus(Status.BORROWED));
+    private void updateCatalog(List<Book> bag) {
+        log.debug("Updating catalog for borrowed books");
+
+        bag.forEach(book -> {
+            book.setStatus(Status.BORROWED);
+            log.debug("Book status updated to BORROWED for book ID: {}", book.getId());
+        });
     }
 
-    private void addToBorrowedList(long id, BorrowedBook transaction) { // add list of borrowed books to member
+    private void addToBorrowedList(long id, BorrowedBook transaction) {
+        log.debug("Adding borrowed book to member's borrowed list, member ID: {}, book ID: {}", id, transaction.getBook().getId());
+
         Member member = memberRepository.findById(id)
-                .orElseThrow(() -> new MemberNotFoundException("Member " + id + " not found"));
+                .orElseThrow(() -> {
+                    log.error("Member not found for ID: {}", id);
+                    return new MemberNotFoundException("Member " + id + " not found");
+                });
 
         if (member.getBorrowedBooks() == null) {
-            member.setBorrowedBooks(new ArrayList<>()); // Initialize the list if it's null
+            member.setBorrowedBooks(new ArrayList<>());
         }
 
         member.getBorrowedBooks().add(transaction);
-
-        memberRepository.save(member); // Make sure to save the updated member entity
+        memberRepository.save(member);
     }
 
     // HELPER METHODS
-    private static List<Book> getBag(HttpSession session) { // helper method to fetch bag from session
-        return (session.getAttribute(MEMBER_BAG) == null) ? new ArrayList<>() :
-                (List<Book>) session.getAttribute(MEMBER_BAG);
+    private static List<Book> getBag(HttpSession session) {
+        List<Book> bag = (List<Book>) session.getAttribute(MEMBER_BAG);
+
+        if (bag == null) {
+            bag = new ArrayList<>();
+            session.setAttribute(MEMBER_BAG, bag);
+        }
+
+        return bag;
     }
+
     private static void ifBookAvailableAddToBag(Book book, List<Book> bag) {
-        if(book.getStatus() == Status.AVAILABLE){
+        if (book.getStatus() == Status.AVAILABLE) {
             bag.add(book);
+            log.debug("Book added to bag: {}", book.getTitle());
         } else {
             throw new BookNotAvailableException("Not available");
         }

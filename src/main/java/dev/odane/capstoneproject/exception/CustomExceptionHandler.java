@@ -41,5 +41,17 @@ public class CustomExceptionHandler {
                 .message(borrowedBookNotFoundException.getMessage())
                 .build();
     }
+    @ExceptionHandler(NoFineException.class)
+    public ExceptionDTO handleNoFineException(NoFineException noFineException){
+        return  ExceptionDTO.builder()
+                .message(noFineException.getMessage())
+                .build();
+    }
+    @ExceptionHandler(BagIsEmptyException.class)
+    public ExceptionDTO handleBagIsEmptyException(BagIsEmptyException bagIsEmptyException){
+        return  ExceptionDTO.builder()
+                .message(bagIsEmptyException.getMessage())
+                .build();
+    }
 
 }

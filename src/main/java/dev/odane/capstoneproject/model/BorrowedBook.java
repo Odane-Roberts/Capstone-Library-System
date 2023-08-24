@@ -18,8 +18,7 @@ import java.time.LocalDateTime;
 @JsonIgnoreProperties("member") // Exclude the member property from JSON serialization
 public class BorrowedBook implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "borrowed_book_seq")
-    @SequenceGenerator(name = "borrowed_book_seq", sequenceName = "borrowed_book_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "dateborrowed")
     private LocalDateTime dateBorrowed;
@@ -28,7 +27,7 @@ public class BorrowedBook implements Serializable {
     @Column(name = "datereturned")
     private LocalDateTime dateReturned;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "borrowerid")
     private Member member;
 

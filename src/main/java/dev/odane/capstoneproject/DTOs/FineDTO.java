@@ -6,11 +6,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
-@Data
 @Builder
-@AllArgsConstructor
+@Data
 @NoArgsConstructor
-public class AuthenticationResponse implements Serializable {
-    private String token;
+@AllArgsConstructor
+public class FineDTO implements Serializable {
+    private String name;
+    private String email;
+    private BigDecimal fine;
 }

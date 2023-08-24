@@ -9,24 +9,20 @@ import dev.odane.capstoneproject.model.*;
 import dev.odane.capstoneproject.repository.BookRepository;
 import dev.odane.capstoneproject.repository.BorrowedBookRepository;
 import dev.odane.capstoneproject.repository.MemberRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
+
     private final MemberRepository repository;
     private final MemberMapper memberMapper;
     private final BookRepository bookRepository;
     private final BorrowedBookRepository borrowedBookRepository;
-
-    public MemberServiceImpl(MemberRepository repository, MemberMapper memberMapper, BookRepository bookRepository, BorrowedBookRepository borrowedBookRepository) {
-        this.repository = repository;
-        this.memberMapper = memberMapper;
-        this.bookRepository = bookRepository;
-        this.borrowedBookRepository = borrowedBookRepository;
-    }
 
     @Override
     public List<MemberDTO> findAllMembers() {

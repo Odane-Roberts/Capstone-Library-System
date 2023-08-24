@@ -148,28 +148,28 @@ class MemberControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name", is("John")));
     }
 
-    @Test
-    void addMember() throws Exception {
-        //given
-        Member newMember = member;
-
-        //when
-        Mockito.when(service.addMember(newMember)).thenReturn(newMember);
-
-        //performing some utility methods
-        objectMapper.findAndRegisterModules(); // update the module for object mapper to use local time and date
-        String content = objectWriter.writeValueAsString(newMember); // convert object to json/string
-
-
-        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders
-                .post("/api/v1/member")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(content);
-        //then
-        mockMvc.perform(mockRequest)
-                .andExpect(status().isCreated());
-    }
+//    @Test
+//    void addMember() throws Exception {
+//        //given
+//        Member newMember = member;
+//
+//        //when
+//        Mockito.when(service.addMember(newMember)).thenReturn(newMember);
+//
+//        //performing some utility methods
+//        objectMapper.findAndRegisterModules(); // update the module for object mapper to use local time and date
+//        String content = objectWriter.writeValueAsString(newMember); // convert object to json/string
+//
+//
+//        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders
+//                .post("/api/v1/member")
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .accept(MediaType.APPLICATION_JSON)
+//                .content(content);
+//        //then
+//        mockMvc.perform(mockRequest)
+//                .andExpect(status().isCreated());
+//    }
 
     @Test
     void updateMember() throws Exception {

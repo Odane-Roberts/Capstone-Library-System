@@ -4,6 +4,8 @@ import dev.odane.capstoneproject.DTOs.AuthenticationRequest;
 import dev.odane.capstoneproject.DTOs.AuthenticationResponse;
 import dev.odane.capstoneproject.DTOs.RegisterRequest;
 
+
+
 public interface AuthService {
 
     AuthenticationResponse login(AuthenticationRequest request);

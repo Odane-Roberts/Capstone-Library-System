@@ -20,8 +20,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class Book implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "book_SEQ")
-    @SequenceGenerator(name = "book_SEQ", sequenceName = "book_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
     private String author;   // change this to a class later on! maybe not

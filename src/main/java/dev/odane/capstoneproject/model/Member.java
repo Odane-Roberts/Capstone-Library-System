@@ -19,8 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 public class Member implements Serializable, UserDetails {
     @Id
-    @SequenceGenerator(name = "member_seq", sequenceName = "member_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "member_seq")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "borrowerid")
     private Long id;
     private String name;
@@ -35,7 +34,7 @@ public class Member implements Serializable, UserDetails {
     private Role role;
 
 
-    @OneToMany
+    @ManyToMany
     @JoinTable(
             name = "borrowed_book", //name of the table that holds the relationship
             joinColumns = @JoinColumn(name = "borrowerid"), // references the member

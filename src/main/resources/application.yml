@@ -18,7 +18,13 @@ spring:
     # Flyway table prefix (optional, if you want to change the default)
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 
+logging:
+  level:
+    root: INFO
+    dev.odane.capstoneproject: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"
