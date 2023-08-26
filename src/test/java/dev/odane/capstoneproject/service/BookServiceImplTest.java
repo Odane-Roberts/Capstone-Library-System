@@ -13,6 +13,7 @@ import org.mockito.Mockito;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -33,7 +34,7 @@ class BookServiceImplTest {
 
     @Test
     void testFindById() {
-        Long bookId = 1L;
+        UUID bookId = UUID.randomUUID();
         Book book = new Book();
         when(repository.findById(bookId)).thenReturn(Optional.of(book));
 
@@ -44,7 +45,7 @@ class BookServiceImplTest {
 
     @Test
     void testFindByIdNotFound() {
-        Long bookId = 1L;
+        UUID bookId = UUID.randomUUID();
         when(repository.findById(bookId)).thenReturn(Optional.empty());
 
         assertThrows(BookNotFoundBookException.class, () -> bookService.findById(bookId));

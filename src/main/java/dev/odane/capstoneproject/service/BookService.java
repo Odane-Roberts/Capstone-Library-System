@@ -6,10 +6,11 @@ import dev.odane.capstoneproject.model.Category;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 
 public interface BookService {
-    Book findById(Long id);
+    Book findById(UUID id);
 
     Book addBook(Book book);
 

@@ -1,6 +1,6 @@
 -- Create the Book table
 CREATE TABLE Book (
-                      id SERIAL PRIMARY KEY, -- use big serial along with IDENTITY
+                      id UUID PRIMARY KEY, -- use big serial along with IDENTITY
                       title VARCHAR(255) NOT NULL,
                       author VARCHAR(255) NOT NULL,
                       isbn VARCHAR(255) NOT NULL,
@@ -9,12 +9,27 @@ CREATE TABLE Book (
                       quantity INT NOT NULL,
                       status VARCHAR(10) NOT NULL CHECK (status IN ('AVAILABLE', 'BORROWED')) -- Borrowed or unavailable
 );
+
+CREATE TABLE ADMIN (
+    id UUID NOT NULL PRIMARY KEY,
+    email VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    firstname VARCHAR(255) NOT NULL,
+    lastname VARCHAR(255) NOT NULL,
+    dob DATE NOT NULL,
+    gender VARCHAR(255) NOT NULL,
+    phone VARCHAR(15) NOT NULL,
+    role VARCHAR(255) NOT NULL
+
+);
+
+
 CREATE SEQUENCE book_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
-    CACHE 1;
+    CACHE 50;
 
 ALTER SEQUENCE book_seq
     CACHE 50;
@@ -24,24 +39,23 @@ ALTER SEQUENCE book_seq
 
 -- Create the Borrower table
 CREATE TABLE Borrower (
-                          borrowerId SERIAL PRIMARY KEY,
+                          borrowerId UUID NOT NULL PRIMARY KEY,
                           name VARCHAR(255) NOT NULL,
+                          dob DATE NOT NULL,
                           gender VARCHAR(25) NOT NULL,
                           email VARCHAR(255) NOT NULL,
+                          password VARCHAR(255) NOT NULL,
                           phone VARCHAR(255) NOT NULL,
                           status VARCHAR(10) NOT NULL CHECK (status IN ('ACTIVE', 'INACTIVE'))
 );
 
--- CREATE TABLE Author (
---     id VARCHAR(255) PRIMARY KEY,
---     name VARCHAR(255) NOT NULL
--- );
+
 
 -- Create the BorrowedBook table to represent the many-to-many relationship between Book and Borrower
 CREATE TABLE Borrowed_Book (
-                            id SERIAL PRIMARY KEY,
-                            borrowerId INTEGER NOT NULL ,
-                            book_id INTEGER NOT NULL,
+                            id UUID NOT NULL PRIMARY KEY,
+                            borrowerId UUID NOT NULL ,
+                            book_id UUID NOT NULL,
                             dateBorrowed DATE,
                             dueDate DATE,
                             dateReturned DATE,
@@ -51,9 +65,9 @@ CREATE TABLE Borrowed_Book (
 
 -- Create the BookReview table
 CREATE TABLE BookReview (
-                            reviewId SERIAL PRIMARY KEY,
-                            borrowerId INTEGER NOT NULL,
-                            id INTEGER NOT NULL,
+                            reviewId UUID PRIMARY KEY,
+                            borrowerId UUID NOT NULL,
+                            id UUID NOT NULL,
                             comment TEXT,
                             FOREIGN KEY (borrowerId) REFERENCES Borrower(borrowerId),
                             FOREIGN KEY (id) REFERENCES Book(id)
@@ -61,8 +75,8 @@ CREATE TABLE BookReview (
 
 -- Create the ReturnBook table to represent the many-to-many relationship between Book and Borrower
 CREATE TABLE ReturnBook (
-                            borrowerId INTEGER NOT NULL,
-                            id INTEGER NOT NULL,
+                            borrowerId UUID NOT NULL,
+                            id UUID NOT NULL,
                             dateBorrowed DATE,
                             dueDate DATE,
                             dateReturned DATE,
@@ -70,4 +84,3 @@ CREATE TABLE ReturnBook (
                             FOREIGN KEY (borrowerId) REFERENCES Borrower(borrowerId),
                             FOREIGN KEY (id) REFERENCES Book(id)
 );
-CREATE SEQUENCE borrowed_book_seq START 1;

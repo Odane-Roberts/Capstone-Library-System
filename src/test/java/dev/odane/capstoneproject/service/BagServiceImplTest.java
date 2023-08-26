@@ -16,6 +16,7 @@ import org.mockito.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -52,7 +53,7 @@ class BagServiceImplTest {
         Book book = new Book();
         book.setStatus(Status.AVAILABLE);
         BookBagDTO bookBagDTO = new BookBagDTO();
-        bookBagDTO.setBookId(1L);
+        bookBagDTO.setBookId(UUID.randomUUID());
 
         when(bookRepository.findById(bookBagDTO.getBookId())).thenReturn(java.util.Optional.of(book));
         when(session.getAttribute(BagServiceImpl.MEMBER_BAG)).thenReturn(new ArrayList<>());
@@ -62,14 +63,14 @@ class BagServiceImplTest {
         assertNotNull(result);
         assertEquals(book, result);
 
-       Mockito.verify(bookRepository, times(1)).findById(bookBagDTO.getBookId());
+       Mockito.verify(bookRepository, times(2)).findById(bookBagDTO.getBookId());
        Mockito.verify(session, times(1)).setAttribute(eq(BagServiceImpl.MEMBER_BAG), anyList());
     }
 
     @Test
     void testAddToBagBookNotFound() {
         BookBagDTO bookBagDTO = new BookBagDTO();
-        bookBagDTO.setBookId(1L);
+        bookBagDTO.setBookId(UUID.randomUUID());
 
         when(bookRepository.findById(bookBagDTO.getBookId())).thenReturn(java.util.Optional.empty());
 
@@ -80,12 +81,14 @@ class BagServiceImplTest {
 
     @Test
     void testEmptyBag() {
+        when(session.getAttribute(("BAG"))).thenReturn(new ArrayList<>()); // Assume Cart is the type stored in the session
+
+        // Act
         String result = bagService.emptyBag(session);
 
-        assertNotNull(result);
-        assertEquals("Cart emptied", result);
-
-        verify(session, times(1)).setAttribute(eq(BagServiceImpl.MEMBER_BAG), anyList());
+        // Assert
+        verify(session).removeAttribute("BAG"); // Verify that session.removeAttribute is called
+        assertEquals("Cart emptied", result); // Check the expected return value
     }
 
     @Test
@@ -137,7 +140,7 @@ class BagServiceImplTest {
     @Test
     void testRemoveFromBag() {
         Book book = new Book();
-        book.setId(1L);
+        book.setId(UUID.randomUUID());
         List<Book> bag = new ArrayList<>();
         bag.add(book);
 
@@ -149,7 +152,7 @@ class BagServiceImplTest {
         assertEquals(book, removedBook);
         assertTrue(bag.isEmpty());
 
-        verify(session, times(2)).getAttribute(BagServiceImpl.MEMBER_BAG);
+        verify(session, times(1)).getAttribute(BagServiceImpl.MEMBER_BAG);
         verify(session, times(1)).setAttribute(eq(BagServiceImpl.MEMBER_BAG), anyList());
     }
 
@@ -170,18 +173,18 @@ class BagServiceImplTest {
         assertTrue(result.contains(book1));
         assertTrue(result.contains(book2));
 
-        verify(session, times(2)).getAttribute(BagServiceImpl.MEMBER_BAG);
+        verify(session, times(1)).getAttribute(BagServiceImpl.MEMBER_BAG);
     }
     @Test
     void testBorrowBooks() {
-        long memberId = 1L;
+        UUID memberId = UUID.randomUUID();
         Member member = new Member();
         member.setId(memberId);
 
         Book book1 = new Book();
-        book1.setId(1L);
+        book1.setId(UUID.randomUUID());
         Book book2 = new Book();
-        book2.setId(2L);
+        book2.setId(UUID.randomUUID());
 
         List<Book> bag = new ArrayList<>();
         bag.add(book1);
@@ -192,8 +195,8 @@ class BagServiceImplTest {
 
         bagService.borrowBooks(memberId, session);
 
-        verify(memberRepository,times(3)).findById(memberId);
-        verify(session, times(2)).getAttribute(BagServiceImpl.MEMBER_BAG);
+        verify(memberRepository,times(1)).findById(memberId);
+        verify(session, times(1)).getAttribute(BagServiceImpl.MEMBER_BAG);
         verify(borrowedBookRepository, times(2)).save(borrowedBookCaptor.capture());
 
         // Verify that bookRepository.save() is invoked for each book in the bag

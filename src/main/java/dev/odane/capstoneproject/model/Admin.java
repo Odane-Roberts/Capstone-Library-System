@@ -2,12 +2,15 @@ package dev.odane.capstoneproject.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -18,18 +21,26 @@ import java.util.List;
 public class Admin  implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @GenericGenerator(name = "UUID", parameters =
+            {@org.hibernate.annotations.Parameter(name = "uuid_gen_strategy_class", value = "org.hibernate.id.uuid.CustomVersionOneStrategy")})
+    private UUID id;
     private String firstname;
     private String lastname;
 
     private String email;
     private String phone;
+    private LocalDate dob;
     @Enumerated(EnumType.STRING)
     private Gender gender;
     private String password;
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    public Admin(String email, Role role) {
+        this.email = email;
+        this.role = role;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

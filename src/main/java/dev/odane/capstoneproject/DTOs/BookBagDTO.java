@@ -5,12 +5,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 
 public class BookBagDTO implements Serializable {
-    private Long bookId;
+    private UUID bookId;
     private Integer quantity;
 }

@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -26,7 +27,7 @@ class BagControllerTest {
     private final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(bagController).build();
 
     Book bookPojo = Book.builder()
-            .id(1L)
+            .id(UUID.randomUUID())
             .title("Book 1")
             .author("John")
             .isbn("234234234234")
@@ -91,12 +92,12 @@ class BagControllerTest {
 
     @Test
     void testBorrowBooks() throws Exception {
-        long id = 1L;
+        UUID id = UUID.randomUUID();
         MockHttpSession session = new MockHttpSession();
 
         when(bagService.borrowBooks(id, session)).thenReturn("Books borrowed.");
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/bag/{id}/borrow", id)
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/bag/"+id+"/borrow")
                         .session(session))
                 .andExpect(MockMvcResultMatchers.status().isCreated());
     }

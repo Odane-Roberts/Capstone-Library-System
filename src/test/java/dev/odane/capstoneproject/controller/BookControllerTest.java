@@ -1,6 +1,5 @@
 package dev.odane.capstoneproject.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import dev.odane.capstoneproject.DTOs.BookDTO;
@@ -23,15 +22,13 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.hamcrest.Matchers.*;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class BookControllerTest {
@@ -63,7 +60,7 @@ class BookControllerTest {
     }
 
     BookDTO book1 = BookDTO.builder()
-            .id(1L)
+            .id(UUID.randomUUID())
             .title("Book 1")
             .author("John")
             .status(Status.AVAILABLE)
@@ -79,7 +76,7 @@ class BookControllerTest {
             .status(Status.AVAILABLE)
             .build();
     Book bookPojo = Book.builder()
-            .id(1L)
+            .id(UUID.randomUUID())
             .title("Book 1")
             .author("John")
             .isbn("234234234234")
@@ -114,12 +111,14 @@ class BookControllerTest {
 
         Book book = bookPojo;
 
+        UUID id = UUID.randomUUID();
         //when
-        Mockito.when(bookService.findById(anyLong())).thenReturn(book);
+        Mockito.when(bookService.findById(id)).thenReturn(book);
+
 
         // then
         mockMvc.perform(MockMvcRequestBuilders
-                .get("/api/v1/book/1")
+                .get("/api/v1/book/"+id)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$",notNullValue()))

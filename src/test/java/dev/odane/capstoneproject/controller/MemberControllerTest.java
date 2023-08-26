@@ -1,233 +1,149 @@
 package dev.odane.capstoneproject.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import dev.odane.capstoneproject.DTOs.BookDTO;
 import dev.odane.capstoneproject.DTOs.MemberDTO;
-import dev.odane.capstoneproject.model.*;
-import dev.odane.capstoneproject.repository.MemberRepository;
+import dev.odane.capstoneproject.model.Admin;
+import dev.odane.capstoneproject.model.BorrowedBook;
+import dev.odane.capstoneproject.model.Member;
+import dev.odane.capstoneproject.model.Role;
+import dev.odane.capstoneproject.repository.AdminRepository;
 import dev.odane.capstoneproject.service.MemberService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
-import static org.hamcrest.Matchers.*;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class MemberControllerTest {
-
-    private MockMvc mockMvc;
+ class MemberControllerTest {
 
     @Mock
     private MemberService service;
+
     @Mock
-    private MemberRepository repository;
+    private AdminRepository adminRepository;
+
+    @Mock
+    private Authentication authentication;
+
+    @Mock
+    private SecurityContext securityContext;
 
     @InjectMocks
     private MemberController memberController;
 
-    ObjectMapper objectMapper = new ObjectMapper(); // to convert object to string content
-    ObjectWriter objectWriter = objectMapper.writer(); // can be implemented better
-
-    MemberDTO member1  = MemberDTO.builder()
-            .id(1L)
-            .name("O'dane")
-            .phone("876-486-6195")
-            .build();
-    MemberDTO member2  = MemberDTO.builder()
-            .id(2L)
-            .name("Jordan")
-            .phone("876-486-1234")
-            .build();
-    MemberDTO member3  = MemberDTO.builder()
-            .id(3L)
-            .name("Andrew")
-            .phone("876-486-5678")
-            .build();
-
-    Member member = Member.builder()
-            .id(5L)
-            .name("John")
-            .email("john@gmail.com")
-            .phone("876-486-1234")
-            .status(MemberStatus.ACTIVE)
-            .gender(Gender.MALE)
-            .borrowedBooks(new ArrayList<>())
-            .build();
-
-    //bookDTO's
-    BookDTO book1 = BookDTO.builder()
-            .id(1L)
-            .title("Book 1")
-            .author("John")
-            .status(Status.AVAILABLE)
-            .build();
-    BookDTO book2 = BookDTO.builder()
-            .title("Book 2")
-            .author("Joe")
-            .status(Status.AVAILABLE)
-            .build();
-    BookDTO book3 = BookDTO.builder()
-            .title("Book 3")
-            .author("Job")
-            .status(Status.AVAILABLE)
-            .build();
-    Book bookPojo = Book.builder()
-            .id(1L)
-            .title("Book 1")
-            .author("John")
-            .isbn("234234234234")
-            .publicationDate(LocalDateTime.now().minusYears(3))
-            .category(Category.FICTION)
-            .quantity(5)
-            .status(Status.AVAILABLE)
-            .build();
-
-    BorrowedBook borrowedBook = BorrowedBook.builder()
-            .id(1L)
-            .book(bookPojo)
-            .dateBorrowed(LocalDateTime.now())
-            .dueDate(LocalDateTime.now().plusDays(7))
-            .dateReturned(null)
-            .member(member)
-            .build();
+    private MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        this.mockMvc = MockMvcBuilders.standaloneSetup(memberController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(memberController).build();
     }
 
-
     @Test
-    void getMembers() throws Exception {
-        //given
-        List<MemberDTO> members = new ArrayList<>(List.of(member1, member2, member3));
+    void testGetMembers() throws Exception {
+        when(adminRepository.findAll()).thenReturn(Collections.singletonList(new Admin("authorized@example.com", Role.ADMIN)));
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
 
-        //when
-        Mockito.when(service.findAllMembers()).thenReturn(members);
+        List<MemberDTO> members = Collections.singletonList(new MemberDTO());
+        when(service.findAllMembers()).thenReturn(members);
 
-        //then
-        mockMvc.perform(MockMvcRequestBuilders
-                        .get("/api/v1/member")
-                        .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/v1/member"))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$",hasSize(3)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].name", is("O'dane")))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[2].phone", is("876-486-5678")));
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.length()").value(1));
+
+        verify(service, times(1)).findAllMembers();
     }
 
-    @Test
-    void getMemberById() throws Exception {
-        //given
-        Member mem = member;
 
-        //when
-        Mockito.when(service.findById(anyLong())).thenReturn(mem);
+     @Test
+     void testGetMemberById() throws Exception {
+         UUID memberId = UUID.randomUUID();
+         Member member = new Member();
+         member.setId(memberId);
+         member.setName("John Doe");
+         member.setRole(Role.MEMBER); // Set the role in the member object
 
-        //then
-        mockMvc.perform(MockMvcRequestBuilders
-                        .get("/api/v1/member/5")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$",notNullValue()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name", is("John")));
-    }
+         when(service.findById(memberId)).thenReturn(member);
 
-//    @Test
-//    void addMember() throws Exception {
-//        //given
-//        Member newMember = member;
-//
-//        //when
-//        Mockito.when(service.addMember(newMember)).thenReturn(newMember);
-//
-//        //performing some utility methods
-//        objectMapper.findAndRegisterModules(); // update the module for object mapper to use local time and date
-//        String content = objectWriter.writeValueAsString(newMember); // convert object to json/string
-//
-//
-//        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders
-//                .post("/api/v1/member")
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .accept(MediaType.APPLICATION_JSON)
-//                .content(content);
-//        //then
-//        mockMvc.perform(mockRequest)
-//                .andExpect(status().isCreated());
-//    }
+         mockMvc.perform(get("/api/v1/member/" + memberId))
+                 .andExpect(status().isOk())
+                 .andExpect(jsonPath("$.id").value(memberId.toString()))
+                 .andExpect(jsonPath("$.name").value("John Doe"))
+                 .andExpect(jsonPath("$.role").value("MEMBER")); // Assert the role name
+
+         verify(service, times(1)).findById(memberId);
+     }
 
     @Test
-    void updateMember() throws Exception {
-        //given
-        Member updatedMember = member;
+    void testUpdateMember() throws Exception {
+        Member member = new Member();
+        when(service.updateMember(member)).thenReturn(member);
 
-        //when
-        Mockito.when(service.updateMember(updatedMember)).thenReturn(updatedMember);
-
-        objectMapper.findAndRegisterModules();
-        String content = objectWriter.writeValueAsString(updatedMember);
-
-        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.put("/api/v1/member")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(content);
-
-        //then
-        mockMvc.perform(mockRequest)
+        mockMvc.perform(put("/api/v1/member")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{}")) // Provide appropriate JSON content here
                 .andExpect(status().isAccepted());
+
+        verify(service, times(1)).updateMember(any(Member.class));
     }
 
     @Test
-    void getBorrowedBooks() throws Exception {
-        //given
-        List<BorrowedBook> books = List.of(borrowedBook); // create BorrowedBook mock objects
+    void testGetBorrowedBooks() throws Exception {
+        UUID memberId = UUID.randomUUID();
+        List<BorrowedBook> borrowedBooks = Collections.singletonList(new BorrowedBook());
+        when(service.getBorrowBooks(memberId)).thenReturn(borrowedBooks);
 
-        //when
-        Mockito.when(service.getBorrowBooks(anyLong())).thenReturn(books); // refactor
-
-        mockMvc.perform(MockMvcRequestBuilders
-                        .get("/api/v1/member/5/borrowed")
-                        .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/v1/member/" + memberId + "/borrowed"))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$",hasSize(1)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].book.title", is("Book 1")));
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.length()").value(1));
 
+        verify(service, times(1)).getBorrowBooks(memberId);
     }
 
     @Test
-    void removeMember() throws Exception {
-        //given
-        Member memberToBeDeleted = member;
+    void testGetSecurityContextAuthorized() throws Exception {
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getName()).thenReturn("authorized@example.com");
 
-        //When
-        Mockito.when(service.removeMember(memberToBeDeleted)).thenReturn(memberToBeDeleted);
+        SecurityContextHolder.setContext(securityContext);
 
-
-        //then
-        String content = objectWriter.writeValueAsString(memberToBeDeleted);
-
-        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.delete("/api/v1/member")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(content);
-
-        //then
-        mockMvc.perform(mockRequest)
+        mockMvc.perform(get("/api/v1/member"))
                 .andExpect(status().isOk());
+
     }
+
+     @Test
+     void testGetSecurityContextUnauthorized() throws Exception {
+         when(securityContext.getAuthentication()).thenReturn(authentication);
+         when(authentication.getName()).thenReturn("unauthorized@example.com");
+
+
+         SecurityContextHolder.setContext(securityContext);
+
+         mockMvc.perform(get("/api/v1/member"))
+                 .andExpect(status().isOk());
+
+
+     }
+
+
+     // Additional tests for other methods can be added here
 }

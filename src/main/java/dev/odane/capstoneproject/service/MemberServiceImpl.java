@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -31,16 +32,15 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Member findById(Long id) {
+    public Member findById(UUID id) {
         return repository.findById(id)
                 .orElseThrow(() ->new MemberNotFoundException("Member not found "+id));
     }
 
 
     @Override
-    public Member removeMember(Member member) {
+    public void removeMember(Member member) {
         repository.delete(member);
-        return member;
     }
 
     @Override
@@ -49,7 +49,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public List<BorrowedBook> getBorrowBooks(Long id) {
+    public List<BorrowedBook> getBorrowBooks(UUID id) {
         return borrowedBookRepository.findBorrowedBookByMember(repository.findById(id)
                 .orElseThrow(() -> new MemberNotFoundException("Member not found "+id)));
     }
@@ -71,12 +71,5 @@ public class MemberServiceImpl implements MemberService {
         return "Thanks for returning the book"; // return a status
     }
 
-    @Override
-    public void deactivateMember(Member member) {
-        member.setStatus(MemberStatus.INACTIVE);
-    }
-    @Override
-    public void activateMember(Member member) {
-        member.setStatus(MemberStatus.ACTIVE);
-    }
+
 }

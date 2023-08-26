@@ -17,8 +17,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
-
+import java.util.UUID;
 
 
 @Service
@@ -34,6 +33,14 @@ public class BagServiceImpl implements BagService {
 
     @Override
     public Book addToBag(BookBagDTO bookBagDTO, HttpSession session) {
+
+        if (bookRepository.findById(bookBagDTO
+                .getBookId()).orElseThrow( () -> new BookNotFoundBookException("Book is not in the catalog"))
+                .getStatus().equals(Status.BORROWED)) {
+            log.debug("Book is Reserved or Borrowed");
+            throw new BookNotAvailableException("Book not available");
+        }
+
         log.debug("Adding book to bag for book ID: {}", bookBagDTO.getBookId());
 
         List<Book> bag = getBag(session);
@@ -98,7 +105,7 @@ public class BagServiceImpl implements BagService {
     }
 
     @Override
-    public String borrowBooks(long id, HttpSession session) {
+    public String borrowBooks(UUID id, HttpSession session) {
         log.debug("Borrowing books for member ID: {}", id);
 
         final Member member = memberRepository.findById(id)
@@ -142,7 +149,6 @@ public class BagServiceImpl implements BagService {
                 .build();
 
         borrowedBookRepository.save(transaction);
-//        addToBorrowedList(member.getId(), transaction);
     }
 
     private void updateCatalog(List<Book> bag) {
@@ -150,26 +156,11 @@ public class BagServiceImpl implements BagService {
 
         bag.forEach(book -> {
             book.setStatus(Status.BORROWED);
+            bookRepository.save(book);
             log.debug("Book status updated to BORROWED for book ID: {}", book.getId());
         });
     }
 
-    private void addToBorrowedList(long id, BorrowedBook transaction) {
-        log.debug("Adding borrowed book to member's borrowed list, member ID: {}, book ID: {}", id, transaction.getBook().getId());
-
-        Member member = memberRepository.findById(id)
-                .orElseThrow(() -> {
-                    log.error("Member not found for ID: {}", id);
-                    return new MemberNotFoundException("Member " + id + " not found");
-                });
-
-        if (member.getBorrowedBooks() == null) {
-            member.setBorrowedBooks(new ArrayList<>());
-        }
-
-        member.getBorrowedBooks().add(transaction);
-        memberRepository.save(member);
-    }
 
     // HELPER METHODS
     private static List<Book> getBag(HttpSession session) {

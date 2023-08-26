@@ -2,13 +2,16 @@ package dev.odane.capstoneproject.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -19,14 +22,17 @@ import java.util.List;
 @AllArgsConstructor
 public class Member implements Serializable, UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @GenericGenerator(name = "UUID", parameters =
+            {@org.hibernate.annotations.Parameter(name = "uuid_gen_strategy_class", value = "org.hibernate.id.uuid.CustomVersionOneStrategy")})
     @Column(name = "borrowerid")
-    private Long id;
+    private UUID id;
     private String name;
     private String email;
     private String password;
     @Enumerated(EnumType.STRING)
     private Gender gender;
+    private LocalDate dob;
     private String phone;
     @Enumerated(EnumType.STRING)
     private MemberStatus status;

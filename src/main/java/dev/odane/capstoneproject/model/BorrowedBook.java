@@ -3,9 +3,11 @@ package dev.odane.capstoneproject.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 
 @Getter
@@ -18,8 +20,10 @@ import java.time.LocalDateTime;
 @JsonIgnoreProperties("member") // Exclude the member property from JSON serialization
 public class BorrowedBook implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @GenericGenerator(name = "UUID", parameters =
+            {@org.hibernate.annotations.Parameter(name = "uuid_gen_strategy_class", value = "org.hibernate.id.uuid.CustomVersionOneStrategy")})
+    private UUID id;
     @Column(name = "dateborrowed")
     private LocalDateTime dateBorrowed;
     @Column(name = "duedate")

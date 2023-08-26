@@ -18,10 +18,12 @@ spring:
     # Flyway table prefix (optional, if you want to change the default)
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-
+#
 logging:
   level:
     root: INFO

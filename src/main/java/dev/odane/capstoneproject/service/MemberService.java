@@ -6,18 +6,16 @@ import dev.odane.capstoneproject.model.BorrowedBook;
 import dev.odane.capstoneproject.model.Member;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface MemberService {
     List<MemberDTO> findAllMembers();
-    Member findById(Long id);
-    Member removeMember(Member member);
+    Member findById(UUID id);
+    void removeMember(Member member);
     Member updateMember(Member member);
-    List<BorrowedBook> getBorrowBooks(Long id);
+    List<BorrowedBook> getBorrowBooks(UUID id);
 
     String returnBooks(Book books);
 
-    // todo move to utility service methods
-    void deactivateMember(Member member);
 
-    void activateMember(Member member);
 }

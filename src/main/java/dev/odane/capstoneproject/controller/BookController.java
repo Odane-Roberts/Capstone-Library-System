@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,7 +33,7 @@ public class BookController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{id}")
-    public Book getBookById(@PathVariable Long id) {
+    public Book getBookById(@PathVariable UUID id) {
         logger.info("Get book by ID request received for ID: {}", id);
         Book book = service.findById(id);
         logger.info("Book retrieved with ID: {}", id);
@@ -44,7 +45,7 @@ public class BookController {
     public Book addBooks(@RequestBody Book book) {
         logger.info("Add book request received");
         Book addedBook = service.addBook(book);
-        logger.info("Book added with ID: {}", addedBook.getId());
+        logger.info("Book added with ID: {}", book.getId());
         return addedBook;
     }
 
@@ -61,7 +62,7 @@ public class BookController {
     public Book updateBook(@RequestBody Book book) {
         logger.info("Update book request received for ID: {}", book.getId());
         Book updatedBook = service.updateBook(book);
-        logger.info("Book updated with ID: {}", updatedBook.getId());
+        logger.info("Book updated with ID: {}", book.getId());
         return updatedBook;
     }
 }

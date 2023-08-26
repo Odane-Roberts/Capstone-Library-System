@@ -15,10 +15,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -57,7 +54,7 @@ class MemberServiceImplTest {
 
 
     Member member = Member.builder()
-            .id(1L)
+            .id(UUID.randomUUID())
             .name("O'dane")
             .email("odane@gmail.com")
             .gender(Gender.MALE)
@@ -66,13 +63,13 @@ class MemberServiceImplTest {
             .borrowedBooks(new ArrayList<>())
             .build();
     MemberDTO member3  = MemberDTO.builder()
-            .id(3L)
+            .id(UUID.randomUUID())
             .name("Andrew")
             .phone("876-486-5678")
             .build();
 
     Book bookPojo = Book.builder()
-            .id(1L)
+            .id(UUID.randomUUID())
             .title("Book 1")
             .author("John")
             .isbn("234234234234")
@@ -83,7 +80,7 @@ class MemberServiceImplTest {
             .build();
 
     BorrowedBook borrowedBook = BorrowedBook.builder()
-            .id(1L)
+            .id(UUID.randomUUID())
             .book(bookPojo)
             .dateBorrowed(LocalDateTime.now())
             .dueDate(LocalDateTime.now().plusDays(7))
@@ -110,7 +107,7 @@ class MemberServiceImplTest {
 
     @Test
     void findById() {
-        Long memberId = 1L;
+        UUID memberId = UUID.randomUUID();
         Member member = new Member();
         when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 
@@ -160,7 +157,7 @@ class MemberServiceImplTest {
 
     @Test
     void getBorrowBooks() {
-        Long memberId = 1L;
+        UUID memberId = UUID.randomUUID();
         Member member = new Member();
         member.setId(memberId);
 
@@ -207,21 +204,5 @@ class MemberServiceImplTest {
         assertEquals(Status.AVAILABLE, book.getStatus());
     }
 
-    @Test
-    void deactivateMember() {
-        Member member = new Member();
 
-        memberService.deactivateMember(member);
-
-        assertEquals(MemberStatus.INACTIVE, member.getStatus());
-    }
-
-    @Test
-    void activateMember() {
-        Member member = new Member();
-
-        memberService.activateMember(member);
-
-        assertEquals(MemberStatus.ACTIVE, member.getStatus());
-    }
 }

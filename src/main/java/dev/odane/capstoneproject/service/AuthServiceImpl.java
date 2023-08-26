@@ -37,8 +37,11 @@ public class AuthServiceImpl implements AuthService {
         logger.info("Registering admin: {}", request.getEmail());
         var admin = Admin.builder()
                 .firstname(request.getFirstname())
+                .dob(request.getDob())
                 .lastname(request.getLastname())
                 .email(request.getEmail())
+                .phone(request.getPhone())
+                .gender(request.getGender())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(Role.ADMIN)
                 .build();
@@ -58,6 +61,7 @@ public class AuthServiceImpl implements AuthService {
         var member = Member.builder()
                 .name(request.getFirstname() + " " + request.getLastname())
                 .email(request.getEmail())
+                .dob(request.getDob())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .status(MemberStatus.ACTIVE)
                 .gender(request.getGender())

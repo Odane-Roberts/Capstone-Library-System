@@ -3,6 +3,8 @@ package dev.odane.capstoneproject.service;
 import dev.odane.capstoneproject.DTOs.FineDTO;
 import dev.odane.capstoneproject.DTOs.MostBorrowedBookDTO;
 import dev.odane.capstoneproject.exception.NoFineException;
+import dev.odane.capstoneproject.model.Member;
+import dev.odane.capstoneproject.model.MemberStatus;
 import dev.odane.capstoneproject.repository.BorrowedBookRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -65,5 +67,13 @@ public class UtilityServiceImpl implements UtilityService {
             throw new NoFineException("No fine owed");
         }
         return fineDTOList;
+    }
+    @Override
+    public void deactivateMember(Member member) {
+        member.setStatus(MemberStatus.INACTIVE);
+    }
+    @Override
+    public void activateMember(Member member) {
+        member.setStatus(MemberStatus.ACTIVE);
     }
 }

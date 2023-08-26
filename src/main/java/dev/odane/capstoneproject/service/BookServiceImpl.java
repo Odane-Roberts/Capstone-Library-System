@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +24,7 @@ public class BookServiceImpl implements BookService {
     private final BookMapper mapper;
 
     @Override
-    public Book findById(Long id) {
+    public Book findById(UUID id) {
         logger.info("Finding book by ID: {}", id);
         return repository.findById(id)
                 .orElseThrow(() -> {

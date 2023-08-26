@@ -4,13 +4,19 @@ import dev.odane.capstoneproject.DTOs.MemberDTO;
 import dev.odane.capstoneproject.model.Book;
 import dev.odane.capstoneproject.model.BorrowedBook;
 import dev.odane.capstoneproject.model.Member;
+import dev.odane.capstoneproject.model.Role;
+import dev.odane.capstoneproject.repository.AdminRepository;
 import dev.odane.capstoneproject.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,10 +25,13 @@ import java.util.List;
 public class MemberController {
 
     private final MemberService service;
+    private final AdminRepository adminRepository;
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
     public List<MemberDTO> getMembers() {
+//        getSecurityContext();
+
         log.info("Get all members request received");
         List<MemberDTO> members = service.findAllMembers();
         log.info("Members retrieved");
@@ -31,11 +40,24 @@ public class MemberController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{id}")
-    public Member getMemberById(@PathVariable Long id) {
+    public Member getMemberById(@PathVariable UUID id) {
+//        getSecurityContext();
         log.info("Get member by ID request received");
         Member member = service.findById(id);
         log.info("Member retrieved");
         return member;
+    }
+
+    void getSecurityContext() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
+        if (adminRepository.findAll().stream().
+                filter(admin -> admin.getEmail().equals(email))
+                .noneMatch(role -> role.getRole().equals(Role.ADMIN))) {
+            log.info("User with email " + email + " is not authorized");
+            throw new AccessDeniedException("Not authorized");
+        }
     }
 
     @ResponseStatus(HttpStatus.ACCEPTED)
@@ -49,7 +71,7 @@ public class MemberController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{id}/borrowed")
-    public List<BorrowedBook> getBorrowedBooks(@PathVariable Long id) {
+    public List<BorrowedBook> getBorrowedBooks(@PathVariable UUID id) {
         log.info("Get borrowed books request received");
         List<BorrowedBook> borrowedBooks = service.getBorrowBooks(id);
         log.info("Borrowed books retrieved");
@@ -65,11 +87,5 @@ public class MemberController {
         return returnMessage;
     }
 
-    @ResponseStatus(HttpStatus.OK)
-    @DeleteMapping
-    public void removeMember(@RequestBody Member member) {
-        log.info("Remove member request received");
-        service.removeMember(member);
-        log.info("Member removed");
-    }
+
 }

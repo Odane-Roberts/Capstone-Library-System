@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -43,7 +44,7 @@ public class BagController {
     public Book removeFromBag(@RequestBody Book book, HttpSession session) {
         logger.info("Removing book from bag request received");
         Book removedBook = service.removeFromBag(book, session);
-        logger.info("Book removed from bag: {}", removedBook.getTitle());
+        logger.info("Book removed from bag: {}", book.getTitle());
         return removedBook;
     }
 
@@ -58,8 +59,8 @@ public class BagController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/{id}/borrow")
-    public String borrowBooks(@PathVariable Long id, HttpSession session) {
-        logger.info("Borrow books request received for book ID: {}", id);
+    public String borrowBooks(@PathVariable UUID id, HttpSession session) {
+        logger.info("Borrow books request received for from member ID: {}", id);
         String result = service.borrowBooks(id, session);
         logger.info("Borrow books operation result: {}", result);
         return result;
