@@ -4,8 +4,11 @@ server:
   port: 8222
 
 eureka:
+  instance:
+    hostname: localhost
   client:
-    register-with-eureka: false
+    service-url:
+      defaultZone: http://registry:8761/eureka
 
 spring:
   application:
@@ -17,19 +20,19 @@ spring:
           enabled: true
       routes:
         - id: book-service
-          uri: lb://book-service:8090
+          uri: lb://book-service
           predicates:
             - Path=/api/v1/book/**
         - id: member-service
-          uri: lb://member-service:8092
+          uri: lb://member-service
           predicates:
             - Path=/api/v1/member/**
         - id: auth-service
-          uri: lb://auth-service:8091
+          uri: lb://auth-service
           predicates:
             - Path=/api/v1/auth/**
         - id: bag-service
-          uri: lb://bag-service:8093
+          uri: lb://bag-service
           predicates:
-            - Path=/api/v1/**
+            - Path=/api/v1/bag/** , /api/v1/utility/**
 

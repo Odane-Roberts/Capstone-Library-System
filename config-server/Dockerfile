@@ -7,7 +7,7 @@ EXPOSE 8888
 
 
 # Set the working directory inside the container
-ADD target/config-server.jar config-server.jar
+ADD target/*.jar config-server.jar
 
 # Copy the application JAR file into the container
 

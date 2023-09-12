@@ -6,7 +6,7 @@ EXPOSE 8092
 
 
 # Set the working directory inside the container
-ADD target/member-service.jar member-service.jar
+ADD target/*.jar member-service.jar
 
 # Copy the application JAR file into the container
 

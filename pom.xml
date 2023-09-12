@@ -148,7 +148,7 @@
                 <version>9.21.1</version>
                 <configuration>
                     <driver>org.postgresql.Driver</driver>
-                    <url>jdbc:postgresql://localhost:5430/capstoneDB</url>
+                    <url>jdbc:postgresql://postgres-db:5432/capstoneDB_v2</url>
                     <user>root</user>
                     <password>root</password>
                 </configuration>

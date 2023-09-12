@@ -6,7 +6,7 @@ EXPOSE 8091
 
 
 # Set the working directory inside the container
-ADD target/auth-service-docker.jar auth-service-docker.jar
+ADD target/*.jar auth-service-docker.jar
 
 # Copy the application JAR file into the container
 

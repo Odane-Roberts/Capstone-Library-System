@@ -6,7 +6,7 @@ EXPOSE 8093
 
 
 # Set the working directory inside the container
-ADD target/bag-service.jar bag-service.jar
+ADD target/*.jar bag-service.jar
 
 # Copy the application JAR file into the container
 

@@ -6,7 +6,7 @@ EXPOSE 8761
 
 
 # Set the working directory inside the container
-ADD target/registry.jar registry.jar
+ADD target/*.jar registry.jar
 
 # Copy the application JAR file into the container
 

@@ -4,7 +4,7 @@ eureka:
     hostname: localhost
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://registry:8761/eureka
 
 
 server:
@@ -18,7 +18,7 @@ spring:
 
 
   datasource:
-    url: jdbc:postgresql://localhost:5430/capstoneDB_v2
+    url: jdbc:postgresql://postgres-db:5432/capstoneDB_v2
     username: root
     password: root
     driver-class-name: org.postgresql.Driver

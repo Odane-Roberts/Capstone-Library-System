@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  postgres:
+  postgres-db:
     image: postgres:15
     restart: always
     environment:
@@ -9,9 +9,13 @@ services:
       POSTGRES_PASSWORD: root
       POSTGRES_DB: capstoneDB_v2
     volumes:
-      - pg_data:/var/lib/postgresql/capstone-v4
+      - pg_data:/var/lib/postgresql/data
     ports:
-      - "5431:5432"
+      - "5430:5432"
+    networks:
+      - my_network
+
+
   pg-admin:
     image: dpage/pgadmin4:6
 
@@ -19,15 +23,17 @@ services:
       - PGADMIN_DEFAULT_EMAIL=admin@dev.com
       - PGADMIN_DEFAULT_PASSWORD=admin
       - PGADMIN_LISTEN_PORT=5050
-
     ports:
       - "5050:5050"
+
   redis:
     image: redis:alpine
     ports:
       - "6379:6379"
     volumes:
       - redis_data:/data
+    networks:
+      - my_network
 
   keycloak:
     image: quay.io/keycloak/keycloak:22.0.2
@@ -39,9 +45,11 @@ services:
     volumes:
       - keycloak_data:/opt/jboss/keycloak/standalone/data
     command: [ "start-dev" ]
+    networks:
+      - my_network
 
   registry:
-    image: registry:latest
+#    image: registry:latest
     build:
       context: ./registry
       dockerfile: Dockerfile
@@ -51,7 +59,7 @@ services:
      - my_network
 
   member-service:
-    image: member-service:latest
+#    image: member-service:latest
     build:
       context: ./member-service
       dockerfile: Dockerfile
@@ -62,7 +70,7 @@ services:
 
 
   book-service:
-    image: book-service:latest
+#    image: book-service:latest
     build:
       context: ./book-service
       dockerfile: Dockerfile
@@ -74,9 +82,9 @@ services:
 
 
   bag-service:
-    image: bag-service:latest
+#    image: bag-service:latest
     build:
-      context: ./member-service
+      context: ./bag-service
       dockerfile: Dockerfile
     ports:
       - "8093:8093"
@@ -86,7 +94,6 @@ services:
 
 
   config-server:
-    image: config-server:latest
     build:
       context: ./config-server
       dockerfile: Dockerfile
@@ -96,7 +103,6 @@ services:
       - my_network
 
   gateway:
-    image: gateway:latest
     build:
       context: ./gateway
       dockerfile: Dockerfile

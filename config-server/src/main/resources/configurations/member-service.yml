@@ -4,7 +4,7 @@ eureka:
     hostname: localhost
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://registry:8761/eureka
 
 
 server:
@@ -17,7 +17,7 @@ spring:
       book-url: http://localhost:8090/api/v1/book
 
   datasource:
-    url: jdbc:postgresql://localhost:5430/capstoneDB_v2
+    url: jdbc:postgresql://postgres-db:5432/capstoneDB_v2
     username: root
     password: root
     driver-class-name: org.postgresql.Driver
@@ -34,7 +34,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8080/realms/capstone
+          issuer-uri: http://keycloak:8080/realms/capstone
           jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
 
 

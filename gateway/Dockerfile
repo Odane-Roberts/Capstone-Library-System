@@ -6,7 +6,7 @@ EXPOSE 8222
 
 
 # Set the working directory inside the container
-ADD target/gateway.jar gateway.jar
+ADD target/*.jar gateway.jar
 
 # Copy the application JAR file into the container
 

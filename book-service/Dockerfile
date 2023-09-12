@@ -6,7 +6,7 @@ EXPOSE 8090
 
 
 # Set the working directory inside the container
-ADD target/book-service.jar book-service.jar
+ADD target/*.jar book-service.jar
 
 # Copy the application JAR file into the container
 
