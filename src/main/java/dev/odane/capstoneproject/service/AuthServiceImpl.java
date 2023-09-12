@@ -35,6 +35,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public AuthenticationResponse register(RegisterRequest request) {
         logger.info("Registering admin: {}", request.getEmail());
+
         var admin = Admin.builder()
                 .firstname(request.getFirstname())
                 .dob(request.getDob())

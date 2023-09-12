@@ -1,0 +1,33 @@
+
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+
+server:
+  port: 8093
+spring:
+  application:
+    name: bag-service
+    config:
+      book-url: http://localhost:8090/api/v1/book
+      member-url: http://localhost:8092/api/v1/member
+
+
+  datasource:
+    url: jdbc:postgresql://localhost:5430/capstoneDB_v2
+    username: root
+    password: root
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+

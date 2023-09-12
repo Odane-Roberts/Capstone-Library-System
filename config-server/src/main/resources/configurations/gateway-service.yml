@@ -1,0 +1,35 @@
+
+
+server:
+  port: 8222
+
+eureka:
+  client:
+    register-with-eureka: false
+
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: book-service
+          uri: lb://book-service:8090
+          predicates:
+            - Path=/api/v1/book/**
+        - id: member-service
+          uri: lb://member-service:8092
+          predicates:
+            - Path=/api/v1/member/**
+        - id: auth-service
+          uri: lb://auth-service:8091
+          predicates:
+            - Path=/api/v1/auth/**
+        - id: bag-service
+          uri: lb://bag-service:8093
+          predicates:
+            - Path=/api/v1/**
+

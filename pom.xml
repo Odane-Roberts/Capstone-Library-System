@@ -11,6 +11,7 @@
     <groupId>dev.odane</groupId>
     <artifactId>Capstone-Project</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
     <name>Capstone-Project</name>
     <description>Capstone-Project</description>
     <properties>
@@ -98,6 +99,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.jacoco</groupId>
             <artifactId>org.jacoco.agent</artifactId>

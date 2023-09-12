@@ -11,7 +11,7 @@ services:
     volumes:
       - pg_data:/var/lib/postgresql/capstone-v4
     ports:
-      - "5430:5432"
+      - "5431:5432"
   pg-admin:
     image: dpage/pgadmin4:6
 
@@ -22,7 +22,6 @@ services:
 
     ports:
       - "5050:5050"
-
   redis:
     image: redis:alpine
     ports:
@@ -30,6 +29,71 @@ services:
     volumes:
       - redis_data:/data
 
+  keycloak:
+    image: quay.io/keycloak/keycloak:22.0.2
+    ports:
+      - "8080:8080"
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+    volumes:
+      - keycloak_data:/opt/jboss/keycloak/standalone/data
+    command: [ "start-dev" ]
+
+  registry:
+    build:
+      context: ./registry
+      dockerfile: Dockerfile
+    ports:
+      - "8761:8761"
+
+  member-service:
+    build:
+      context: ./member-service
+      dockerfile: Dockerfile
+    ports:
+      - "8092:8092"
+
+
+
+
+  book-service:
+    build:
+      context: ./book-service
+      dockerfile: Dockerfile
+    ports:
+      - "8090:8090"
+
+
+
+  bag-service:
+    build:
+      context: ./member-service
+      dockerfile: Dockerfile
+    ports:
+      - "8093:8093"
+
+
+
+  config-server:
+    build:
+      context: ./config-server
+      dockerfile: Dockerfile
+    ports:
+      - "8888:8888"
+
+
+  gateway:
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+
+
+    ports:
+      - "8222:8222"
+
+
 volumes:
   pg_data:
   redis_data:
+  keycloak_data:
