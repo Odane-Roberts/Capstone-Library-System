@@ -11,3 +11,7 @@ spring:
         jwt:
           issuer-uri: http://keycloak:8080/realms/capstone
           jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
+  data:
+    redis:
+      host: redis
+      port: 6379

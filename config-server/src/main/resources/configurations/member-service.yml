@@ -1,7 +1,7 @@
 
 eureka:
   instance:
-    hostname: localhost
+    prefer-ip-address: true
   client:
     service-url:
       defaultZone: http://registry:8761/eureka
@@ -13,8 +13,8 @@ spring:
   application:
     name: member-service
     config:
-      bag-url: http://localhost:8093/api/v1/**
-      book-url: http://localhost:8090/api/v1/book
+      bag-url: http://bag-service:8093/api/v1/**
+      book-url: http://book-service:8090/api/v1/book
 
   datasource:
     url: jdbc:postgresql://postgres-db:5432/capstoneDB_v2

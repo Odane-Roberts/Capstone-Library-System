@@ -1,7 +1,7 @@
 
 eureka:
   instance:
-    hostname: localhost
+    prefer-ip-address: true
   client:
     service-url:
       defaultZone: http://registry:8761/eureka
@@ -13,8 +13,8 @@ spring:
   application:
     name: bag-service
     config:
-      book-url: http://localhost:8090/api/v1/book
-      member-url: http://localhost:8092/api/v1/member
+      book-url: http://book-service:8090/api/v1/book
+      member-url: http://member-service:8092/api/v1/member
 
 
   datasource:

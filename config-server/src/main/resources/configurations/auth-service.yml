@@ -1,7 +1,8 @@
 
 eureka:
   instance:
-    hostname: localhost
+    instance:
+      prefer-ip-address: true
   client:
     service-url:
       defaultZone: http://registry:8761/eureka
