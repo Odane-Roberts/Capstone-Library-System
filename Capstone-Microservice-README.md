@@ -23,7 +23,7 @@ a JSON file will be provided in the main repository called REALM.json, that you 
 - password : admin
 
 ### Database
-The the database was develop using postgres and flyway as the database migration tool.
+The the database was develop using postgres and flyway as the database migration tool. will be runnig on PORT 5430
 
 #### Database Schema 
 the schema will be located on the main repository classpath under Resources --> db 
