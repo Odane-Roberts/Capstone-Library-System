@@ -14,9 +14,13 @@ This Application was developed using a Microservice Architecture, Using Docker t
 For Security we Use keycloak to secure our api with JWT token.
 
 #### keycloak
+
 - keycloak will be in the Docker compose file. when keycloak is started go to http://localhost:8080 and Create a new realm. 
 
 a JSON file will be provided in the main repository called REALM.json, that you should upload to keycloak as it will have all the realm configurations. for further info on using keycloak go to https://www.keycloak.org/getting-started/getting-started-docker
+#### Keycloak Credentials
+- username : admin
+- password : admin
 
 ### Database
 The the database was develop using postgres and flyway as the database migration tool.
@@ -24,6 +28,10 @@ The the database was develop using postgres and flyway as the database migration
 #### Database Schema 
 the schema will be located on the main repository classpath under Resources --> db 
 please remmeber to run the schema after starting the database 
+
+#### Database Credentials
+- username: root
+- password: root
 
 ### LIST OF SERVICES
 - Config-Server
