@@ -48,6 +48,15 @@ services:
     networks:
       - my_network
 
+  auth:
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    ports:
+      - "8091:8091"
+    networks:
+      - my_network
+
   registry:
 #    image: registry:latest
     build:
